@@ -1,5 +1,5 @@
 { "name": "animation"
-, "description": "animation frame interval"
+, "description": "animation timing & handling"
 , "version": "0.0.1"
 , "homepage": "https://github.com/dodo/node-animation"
 , "author": "dodo (https://github.com/dodo)"
