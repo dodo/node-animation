@@ -87,7 +87,7 @@ class @Animation extends EventEmitter
 
         # send the request
         request = requestAnimationFrame(frame, @frametime)
-        if @timeoutime?
+        if @timeouttime?
             timeout = setTimeout(tick.bind(this, no), @timeouttime)
 
     # switches
