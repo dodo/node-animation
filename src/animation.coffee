@@ -4,13 +4,6 @@ ms = require 'ms'
 
 now = -> new Date().getTime()
 
-requestAnimationFrame = do ->
-    orig = requestAnimationFrame
-    return (callback, timeout) ->
-        if orig.isNative
-            orig(callback)
-        else
-            orig(callback, timeout)
 
 # FIXME larger executiontime for timeouts?
 
