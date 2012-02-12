@@ -1,0 +1,5 @@
+*~
+*.swp
+lib/*
+.lock-wscript
+node_modules/

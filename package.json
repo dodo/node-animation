@@ -1,0 +1,18 @@
+{ "name": "animation"
+, "description": "animation frame interval"
+, "version": "0.0.1"
+, "homepage": "https://github.com/dodo/node-animation"
+, "author": "dodo (https://github.com/dodo)"
+, "repository": {"type": "git", "url": "git://github.com/dodo/node-animation.git"}
+, "main": "animation.js"
+, "engines": {"node": ">= 0.4.x"}
+, "keywords": ["request", "animation", "frame", "interval", "node", "browser"]
+, "scripts": {
+    "prepublish": "cake build"}
+, "dependencies": {
+    "ms": ">= 0.1.0",
+    "request-animation-frame": ">= 0.0.1"}
+, "devDependencies": {
+    "muffin": ">= 0.2.6",
+    "coffee-script": ">= 1.1.2"}
+}
