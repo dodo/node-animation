@@ -12,6 +12,8 @@ requestAnimationFrame = do ->
         else
             orig(callback, timeout)
 
+# FIXME larger executiontime for timeouts?
+
 
 class @Animation extends EventEmitter
 
@@ -38,7 +40,7 @@ class @Animation extends EventEmitter
 
     push: (callback) ->
         @queue.push(callback)
-        @resume() if @running and @autotoggle and @paused
+        @resume() if @running and @autotoggle
 
     nextTick: (callback) =>
         [timeout, request] = [null, null]
@@ -67,15 +69,17 @@ class @Animation extends EventEmitter
                     else # keep running
                         @nextTick()
         frame = =>
+            tick.call(this, true) unless @frametime?
             # calc delta time
             started = now()
             dt = started - t
             # when a frametime is specified and requestAnimationFrame
             #  is faster, throttle it until we nealry hit the frametime
-            if @frametime? and dt < @frametime * 0.8 # hope that's alright
+            if dt < @frametime * 0.8 # hope that's alright
                 request = requestAnimationFrame(frame, @frametime)
             else
                 tick.call(this, true)
+
         # send the request
         request = requestAnimationFrame(frame, @frametime)
         if @timeoutime?
@@ -87,7 +91,14 @@ class @Animation extends EventEmitter
         return if @running
         @running = yes
         @emit 'start'
-        @nextTick() unless @paused or @autotoggle
+        unless @paused
+            if @autotoggle
+                if @queue.length
+                    @nextTick()
+                else
+                    @pause()
+            else
+                @nextTick()
 
     stop: () ->
         return unless @running
