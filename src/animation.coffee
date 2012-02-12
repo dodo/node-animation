@@ -19,6 +19,7 @@ class @Animation extends EventEmitter
 
     constructor: (opts = {}) ->
         # options
+        @timoutexecutiontime = ms(opts.timeoutexecution ? 20)
         @executiontime = ms(opts.execution ? 5)
         @timeouttime =  opts.timeout
         @timeouttime = ms(@timeouttime) if @timeouttime?
@@ -32,9 +33,9 @@ class @Animation extends EventEmitter
         @paused = no
         super
 
-    work_queue: (started, dt) ->
+    work_queue: (started, dt, executiontime) ->
         t = now()
-        while @queue.length and t - started < @executiontime
+        while @queue.length and t - started < executiontime
             (@queue.shift())?() # execute
             t = now()
 
@@ -49,6 +50,10 @@ class @Animation extends EventEmitter
             # calc delta time
             started = now()
             dt = started - t
+            if success
+                executiontime = @executiontime
+            else
+                executiontime = @timoutexecutiontime
             # break other timeout
             if success
                 clearTimeout(timeout)
@@ -57,7 +62,7 @@ class @Animation extends EventEmitter
             # work
             @emit('tick', dt)
             callback?(dt)
-            @work_queue(started, dt)
+            @work_queue(started, dt, executiontime)
             # if animation is running and not paused, keep it running
             #  or pause it if autotoggle is enabled
             if @running and not @paused
