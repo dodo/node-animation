@@ -25,8 +25,9 @@ animation.start();
 ```javascript
 animation = new Animation({
     // defaults
+    timeoutexecution:'20ms', // allowed execution time per animation tick timeout
     execution: '5ms', // allowed execution time per animation tick
-    timeout:   null,  // maximum time of a animation tick interval
+    timeout:   null,  // maximum time of a animation tick interval else runs continuously if null
     toggle:    false, // if true animation pauses and resumes itself when render queue gets empty or filled
     frame:     '16ms' // time per frame
 });
