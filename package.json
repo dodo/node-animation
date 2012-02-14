@@ -11,7 +11,7 @@
     "prepublish": "cake build"}
 , "dependencies": {
     "ms": ">= 0.1.0",
-    "request-animation-frame": ">= 0.0.1"}
+    "request-animation-frame": ">= 0.1.0"}
 , "devDependencies": {
     "muffin": ">= 0.2.6",
     "coffee-script": ">= 1.1.2"}
