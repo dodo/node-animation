@@ -66,20 +66,8 @@ class @Animation extends EventEmitter
                         @pause()
                     else # keep running
                         @nextTick()
-        frame = =>
-            tick.call(this, true) unless @frametime?
-            # calc delta time
-            started = now()
-            dt = started - t
-            # when a frametime is specified and requestAnimationFrame
-            #  is faster, throttle it until we nealry hit the frametime
-            if dt < @frametime * 0.8 # hope that's alright
-                request = requestAnimationFrame(frame, @frametime)
-            else
-                tick.call(this, true)
-
         # send the request
-        request = requestAnimationFrame(frame, @frametime)
+        request = requestAnimationFrame(tick.bind(this, yes), @frametime)
         if @timeouttime?
             timeout = setTimeout(tick.bind(this, no), @timeouttime)
 
