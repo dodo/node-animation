@@ -50,7 +50,9 @@ animation.push(function (dt) {
 });
 ```
 
+[Δt](http://dodo.github.com/node-dynamictemplate/) adapters for [DOM](http://dodo.github.com/node-dt-dom/) and [jQuery](http://dodo.github.com/node-dt-dom/) depending on this module to do heavy DOM manipulation like insertion only on requesAnimationFrame.
 [surrender-cube](https://github.com/dodo/node-surrender-cube/blob/master/src/index.coffee) uses this module to draw a rotating wireframe cube in terminal.
+[ceilingled](https://github.com/c3d2/ceilingled) uses this to draw images fetched from superfeedr to draw either on SDL or on a LED wall.
 
 ## Animation
 
