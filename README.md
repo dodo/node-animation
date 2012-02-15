@@ -13,9 +13,40 @@ $ npm install animation
 ## Usage
 
 ```javascript
-animation = new Animation({frame:'100ms'});
+// get a tick every 100ms
+var animation = new Animation({frame:'100ms'});
 animation.on('tick', function (dt) { … });
 animation.start();
+```
+
+```javascript
+// get next tick with delta time to last tick
+var animation = new Animation({frame:'100ms'});
+var animate = function (dt) {
+
+    // do your animation stuff
+
+    if (process.stdout.write(data)) {
+        animation.nextTick(animate);
+    } else {
+        var t = new Date().getTime()
+        process.stdout.once('drain', function () {
+            var now = new Date().getTime();
+            animate(now - t + dt);
+        });
+    }
+};
+animation.nextTick(animate);
+```
+
+```javascript
+// doesnt really matter when its executed, but it should happen
+var animation = new Animation();
+animation.start();
+animation.push(function (dt) {
+    // happens (once) on the next few ticks,
+    // depending on how much tasks are allready pushed
+});
 ```
 
 [surrender-cube](https://github.com/dodo/node-surrender-cube/blob/master/src/index.coffee) uses this module to draw a rotating wireframe cube in terminal.
