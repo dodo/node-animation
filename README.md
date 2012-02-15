@@ -36,11 +36,12 @@ var animate = function (dt) {
         });
     }
 };
-animation.nextTick(animate);
+animation.nextTick(animate); // no start required
 ```
 
 ```javascript
 // doesnt really matter when its executed, but it should happen
+// (use this in browser if you want to update your dom on requesAnimationFrame)
 var animation = new Animation();
 animation.start();
 animation.push(function (dt) {
@@ -147,7 +148,7 @@ animation.on('tick', function (dt) { … });
 
 Emits `tick` event every time the animation executes a animation tick.
 
-`dt` is the time since last animation tick.
+`dt` is the time since last animation tick finished.
 
 Use this to do your animation stuff.
 
