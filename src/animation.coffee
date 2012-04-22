@@ -29,7 +29,7 @@ class @Animation extends EventEmitter
     work_queue: (started, dt, executiontime) ->
         t = now()
         while @queue.length and t - started < executiontime
-            (@queue.shift())?() # execute
+            (@queue.shift())?(dt) # execute
             t = now()
 
     push: (callback) ->
