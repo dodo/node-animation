@@ -2,7 +2,7 @@
 {requestAnimationFrame,cancelAnimationFrame} = require 'request-animation-frame'
 ms = require 'ms'
 
-now = -> new Date().getTime()
+now = Date.now ? -> new Date().getTime()
 
 
 # FIXME larger executiontime for timeouts?
