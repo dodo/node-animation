@@ -40,13 +40,18 @@ class @Animation extends EventEmitter
         [timeout, request] = [null, null]
         t = now()
         tick = (success) ->
+            # request next tick immediately
+            if @running and not @paused and (@queue.length or not @autotoggle)
+                # if animation is running and not paused, keep it running
+                # or pause it if autotoggle is enabled and no jobs left in queue
+                nextid = @nextTick()
             # calc delta time
             started = now()
             dt = started - t
-            if success
-                executiontime = @executiontime
-            else
-                executiontime = @timoutexecutiontime
+            executiontime = if success
+                    @executiontime
+                else
+                    @timoutexecutiontime
             # break other timeout
             if success
                 clearTimeout(timeout)
@@ -56,20 +61,21 @@ class @Animation extends EventEmitter
             @emit('tick', dt)
             callback?(dt)
             @work_queue(started, dt, executiontime)
-            # if animation is running and not paused, keep it running
-            #  or pause it if autotoggle is enabled
-            if @running and not @paused
-                if @queue.length
-                    @nextTick()
-                else # decide if animation can pause
-                    if @autotoggle
-                        @pause()
-                    else # keep running
-                        @nextTick()
+            # no need to check stuff when no next tick was requested
+            return unless nextid?
+            # cancel requested next tick if animation stopped, paused
+            # or ran out of jobs (when autotoggle is enabled)
+            if not @running or @paused or (not @queue.length and @autotoggle)
+                clearTimeout(nextid.timeout) if @timeouttime?
+                cancelAnimationFrame(nextid)
+                @pause()
+            return
         # send the request
         request = requestAnimationFrame(tick.bind(this, yes), @frametime)
         if @timeouttime?
             timeout = setTimeout(tick.bind(this, no), @timeouttime)
+            request.timeout = timeout
+        return request
 
     # switches
 
@@ -77,14 +83,10 @@ class @Animation extends EventEmitter
         return if @running
         @running = yes
         @emit 'start'
-        unless @paused
-            if @autotoggle
-                if @queue.length
-                    @nextTick()
-                else
-                    @pause()
-            else
-                @nextTick()
+        if not @paused and @autotoggle and not @queue.length
+            @pause()
+        else
+            @nextTick()
 
     stop: () ->
         return unless @running
