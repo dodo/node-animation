@@ -12,9 +12,9 @@ class @Animation extends EventEmitter
 
     constructor: (opts = {}) ->
         # options
-        @timoutexecutiontime = ms(opts.timeoutexecution ? 20)
-        @executiontime = ms(opts.execution ? 5)
-        @timeouttime =  opts.timeout
+        @timoutexecutiontime = ms(opts.timeoutexecution ? '32ms') # 2 missed frames
+        @executiontime = ms(opts.execution ? '8ms') # half of 16ms (60 FPS)
+        @timeouttime = opts.timeout
         @timeouttime = ms(@timeouttime) if @timeouttime?
         @autotoggle = opts.toggle ? no
         @frametime = opts.frame
