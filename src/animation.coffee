@@ -43,12 +43,11 @@ class @Animation extends EventEmitter
         [timeout, request] = [null, null]
         t = now()
         tick = (success) ->
-            if requestAnimationFrame.isNative
-                # request next tick immediately
-                if do @need_next_tick
-                    # if animation is running and not paused, keep it running
-                    # or pause it if autotoggle is enabled and no jobs left in queue
-                    nextid = @nextTick()
+            # request next tick immediately
+            if do @need_next_tick
+                # if animation is running and not paused, keep it running
+                # or pause it if autotoggle is enabled and no jobs left in queue
+                nextid = @nextTick()
             # calc delta time
             started = now()
             dt = started - t
@@ -65,12 +64,7 @@ class @Animation extends EventEmitter
             @emit('tick', dt)
             callback?(dt)
             @work_queue(started, dt, executiontime)
-            unless nextid?
-                if do @need_next_tick
-                    nextid = @nextTick()
-                # else no need to check stuff when no next tick was requested
-                # or we already checked the current state
-                return
+            return unless nextid?
             # cancel requested next tick if animation stopped, paused
             # or ran out of jobs (when autotoggle is enabled)
             unless do @need_next_tick
