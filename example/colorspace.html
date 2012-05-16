@@ -1,0 +1,136 @@
+<html>
+<body id="body">
+    <div id="txt" style="opacity:0.4;font-size:44pt"></div>
+</body>
+<script src="../animation.browser.js"></script>
+<script>
+
+function pad(s, h, l) {
+    s = "" + s;
+    if (s.length >= l) return s;
+    return new Array(l - s.length + 1).join(""+h) + s;
+}
+
+// x, y, z, r, g, b are all in the range [0,1]
+
+function mul(col, n) {
+    var c = {};
+    for (var k in col)
+        c[k] = col[k] * n;
+    return c;
+}
+
+function norm(col, n) {
+    return mul(col, 1/n);
+}
+
+function xyz2rgb(c) {
+    var r = {
+        r:c.x *  3.2406 + c.y * -1.5372 + c.z * -0.4986,
+        g:c.x * -0.9689 + c.y *  1.8758 + c.z *  0.0415,
+        b:c.x *  0.0557 + c.y * -0.2040 + c.z *  1.0570
+    };
+    var _proc = 1 / 2.4;
+    for (var k in r) {
+        if ( r[k] > 0.0031308 )
+            r[k] = 1.055 * Math.pow( r[k], _proc ) - 0.055;
+        else
+            r[k] = 12.92 * r[k];
+    }
+    return r;
+}
+
+function rgb2xyz(col) {
+    var c = {};
+    var _proc = 1 / 1.055;
+    for (var k in col) {
+        c[k] = col[k];
+        if ( c[k] > 0.04045 )
+            c[k] = Math.pow( ( c[k] + 0.055 ) * _proc, 2.4);
+        else
+            c[k] /= 12.92;
+    }
+    return {
+        x: c.r * 0.4124 + c.g * 0.3576 + c.b * 0.1805,
+        y: c.r * 0.2126 + c.g * 0.7152 + c.b * 0.0722,
+        z: c.r * 0.0193 + c.g * 0.1192 + c.b * 0.9505
+    };
+}
+
+function CIEtransform(c) { // light matrix
+    var _proc = 1 / 0.17697;
+    return {
+        x: _proc * (c.r * 0.489921 + c.g * 0.310016 + c.b * 0.200063),
+        y: _proc * (c.r * 0.176937 + c.g * 0.812422 + c.b * 0.010641),
+        z: _proc * (c.r * 0.000000 + c.g * 0.009999 + c.b * 0.990301)
+    };
+}
+
+function interpolate(c1, c2, p) {
+    var c = {};
+    for (var k in c1)
+        c[k] = c1[k]*(1-p) + c2[k]*p;
+    return c;
+}
+
+
+var colors = [
+    norm({r:255, g:255, b:0  }, 255), // yellow
+    norm({r:255, g:125, b:0  }, 255), // orange
+    norm({r:255, g:0,   b:0  }, 255), // red
+    norm({r:125, g:0,   b:255}, 255), // violet
+    norm({r:0,   g:0,   b:255}, 255), // blue
+    norm({r:0,   g:255, b:0  }, 255) // green
+];
+
+
+var sec = 0;
+new Animation({frame:'60ms'}).on('tick', function (dt) {
+
+    var t = sec/60/60; // sec as hours
+
+    var i = Math.floor(t % colors.length);
+    var c1 = colors[i];
+    var c2 = colors[(i+1)%colors.length];
+    var p = (t % colors.length) - i;
+
+    // nice_color = surface × lighting × simple_color
+    var c = xyz2rgb(
+        mul(
+            CIEtransform( // human gamut (nicer colers)
+                interpolate( // FIXME
+                    c1,
+                    c2,
+                    p
+                )
+            )
+        // night-day transition (in this case its the lumitance of the stimulus)
+        , Math.pow(Math.sin(t / 24 * Math.PI), 1.3) * 0.03 + 0.002
+        )
+    ); // surface missing!
+//     var c = xyz2rgb(rgb2xyz(interpolate(c1, c2, p))); // workz!
+
+    var body = document.getElementById('body');
+    var txt = document.getElementById('txt');
+
+    var rgb = "rgb("
+            + Math.round(c.r * 255) + ", "
+            + Math.round(c.g * 255) + ", "
+            + Math.round(c.b * 255) + ")";
+//     console.log(t, rgb, tr)
+//     console.log(new Array(Math.floor(Math.abs(c.r)*80)).join(" "),"r")
+//     console.log(new Array(Math.floor(Math.abs(c.g)*80)).join(" "),"g")
+//     console.log(new Array(Math.floor(Math.abs(c.b)*80)).join(" "),"b")
+    body.style.backgroundColor = rgb;
+
+    var d = new Date(sec*1000);
+    txt.textContent = pad(d.getHours(),   "0", 2) + ":"
+                    + pad(d.getMinutes(), "0", 2) + ":"
+                    + pad(d.getSeconds(), "0", 2);
+
+    var c = dt / this.frametime; // tick correction
+    sec += 200 * c;
+    if (t >= 24) sec -= 24*60*60; // overflow → repeat the loop
+}).start();
+</script>
+</html>
