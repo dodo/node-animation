@@ -103,6 +103,22 @@ function hsl2rgb(col) {
     return c;
 }
 
+function xyz2uv(col) {
+    var _proc = 1 / (col.x + 15 * col.y + 3 * col.z);
+    return {
+        u: 4 * col.x * _proc,
+        v: 6 * col.y * _proc
+    };
+}
+
+function uv2xy(c) {
+    var _proc = 1 / (2 * c.u - 8 * c.v + 4);
+    return {
+        x: 3 * c.u * _proc,
+        y: 2 * c.v * _proc
+    };
+}
+
 function CIEtransform(c) { // light matrix
     var _proc = 1 / 0.17697;
     return {
