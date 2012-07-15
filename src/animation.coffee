@@ -68,7 +68,7 @@ class @Animation extends EventEmitter
             # cancel requested next tick if animation stopped, paused
             # or ran out of jobs (when autotoggle is enabled)
             unless do @need_next_tick
-                clearTimeout(nextid.timeout) if @timeouttime?
+                clearTimeout(nextid?.timeout) if @timeouttime?
                 cancelAnimationFrame(nextid)
                 @pause()
             return
@@ -76,7 +76,7 @@ class @Animation extends EventEmitter
         request = requestAnimationFrame(tick.bind(this, yes), @frametime)
         if @timeouttime?
             timeout = setTimeout(tick.bind(this, no), @timeouttime)
-            request.timeout = timeout
+            request?.timeout = timeout
         return request
 
     # switches
