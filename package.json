@@ -14,5 +14,7 @@
     "request-animation-frame": ">= 0.1.0"}
 , "devDependencies": {
     "muffin": ">= 0.2.6",
+    "browserify": "1.6.1",
+    "scopify": ">= 0.1.0",
     "coffee-script": ">= 1.1.2"}
 }
