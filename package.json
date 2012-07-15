@@ -1,6 +1,6 @@
 { "name": "animation"
 , "description": "animation timing & handling"
-, "version": "0.1.2"
+, "version": "0.1.3"
 , "homepage": "https://github.com/dodo/node-animation"
 , "author": "dodo (https://github.com/dodo)"
 , "repository": {"type": "git", "url": "git://github.com/dodo/node-animation.git"}
